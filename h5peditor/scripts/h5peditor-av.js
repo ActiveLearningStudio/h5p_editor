@@ -15,7 +15,7 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
    * @param {function} setValue
    * @returns {_L3.C}
    */
-  function C(parent, field, params, setValue) {
+  function C(parent, field, params, setValue) {    
     var self = this;
 
     // Initialize inheritance
@@ -119,8 +119,8 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
       '</div>';
 
     var html = H5PEditor.createFieldMarkup(this.field, imageHtml, id);
-    var $container = $(html).appendTo($wrapper);
 
+    var $container = $(html).appendTo($wrapper);
     this.$files = $container.children('.file');
     this.$add = $container.children('.h5p-add-file').click(function () {
       self.$addDialog.addClass('h5p-open');
@@ -190,7 +190,7 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
         el.setAttribute('tabindex', '0');
         el.focus();
       }
-    }
+    }    
 
     // Register event listeners to tab DOM elements
     $container.find('.av-tab').click(toggleTab).keydown(function (e) {
@@ -240,6 +240,82 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
     }
 
     var $url = this.$url = this.$addDialog.find('.h5p-file-url');
+    // Fetch Load Playlist Button
+    var $loadPlaylist = this.$addDialog.find('.loadPlaylist');
+    $loadPlaylist.click(function () {
+      var modal = document.getElementById("playlistContent");
+      modal.style.display = "block";
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+        modal.style.display = "none";
+      }
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      };
+
+      // Append Playlist
+      var config = new KalturaConfiguration(4210563);
+      config.serviceUrl = 'https://www.kaltura.com';
+      var client = new KalturaClient(config);    
+      KalturaSessionService.start(
+        KalturaConfig.secret,
+        KalturaConfig.userId,
+        KalturaConfig.type,
+        KalturaConfig.partnerId
+      )
+      .execute(client, function(success, ks) {
+        if (!success || (ks.code && ks.message)) {
+          console.log('Error starting session', success, ks);
+        } else {
+          client.setKs(ks);
+          var filter = {objectType: "KalturaMediaEntryFilter"};
+          var pager = {objectType: "KalturaFilterPager"};
+
+          KalturaMediaService.listAction(filter, pager)
+            .execute(client, function(success, results) {
+              if (!success || (results && results.code && results.message)) {
+                console.log('Kaltura Error', success, results);
+              } else {
+                // console.log('Kaltura Result', results);
+                document.getElementById("modalContent").innerHTML = '';
+                results.objects.forEach(function (item, index) {
+                  var node =  '<div class="play-lists" data-filter-item data-filter-name="'+ item.name.toLowerCase() +'">' +
+                                '<img class="play-list-video" src="'+ item.thumbnailUrl +
+                                '" width=250 height=250 data-url="'+ item.dataUrl +'">' + 
+                                '<span class="kaltura-video-title">'+ item.name +'</span>' +
+                              '</div>';
+                  document.getElementById("modalContent").innerHTML += node;
+                });
+
+                $(document).on("click",".play-list-video",function() {
+                  $(".h5p-file-url").val($(this).data("url"))
+                  $(".modal").css("display", "none")
+                });
+
+                $(document).on("keyup","#input-playlist",function() {
+                  var searchVal = $(this).val();
+                  var filterItems = $('[data-filter-item]');
+                
+                  if ( searchVal != '' ) {
+                    filterItems.addClass('hide-playlist');
+                    $('[data-filter-item][data-filter-name*="' + searchVal.toLowerCase() + '"]')
+                    .removeClass('hide-playlist');
+                  } else {
+                    filterItems.removeClass('hide-playlist');
+                  }
+                });
+              }
+            });
+        }
+      });
+    })
+
     this.$addDialog.find('.h5p-cancel').click(function () {
       self.updateIndex = undefined;
       self.closeDialog();
@@ -304,6 +380,7 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
     });
 
   };
+
 
   /**
    * Add file icon with actions.
@@ -554,6 +631,44 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
     }
   };
 
+  // C.playlistContent = function () {  
+  //   var config = new KalturaConfiguration(4210563);
+  //   config.serviceUrl = 'https://www.kaltura.com';
+  //   var client = new KalturaClient(config);    
+  //   KalturaSessionService.start(
+  //     "3d835f3579b8480b145922d61b463739",
+  //     "devtest220@gmail.com",
+  //     2,
+  //     4210563
+  //   )
+  //   .execute(client, function(success, ks) {
+  //     if (!success || (ks.code && ks.message)) {
+  //       console.log('Error starting session', success, ks);
+  //     } else {
+  //       client.setKs(ks);
+  //       var filter = {objectType: "KalturaMediaEntryFilter"};
+  //       var pager = {objectType: "KalturaFilterPager"};
+
+  //       KalturaMediaService.listAction(filter, pager)
+  //         .execute(client, function(success, results) {
+  //           if (!success || (results && results.code && results.message)) {
+  //             console.log('Kaltura Error', success, results);
+  //           } else {
+  //             // console.log('Kaltura Result', results);
+  //             var node = '<p>hello</p>';
+  //             document.getElementById("modalContent").innerHTML += node;
+  //             // return '<p>hello</p>';
+  //             // results.objects.forEach(function (item, index) {
+  //             //   console.log(item.dataUrl)
+  //             //   return '<p>' + item.dataUrl + '</p>'
+  //             // })
+  //           }
+  //         });
+
+  //     }
+  //   });  
+  // }
+
   /**
    * Create the HTML for the dialog itself.
    *
@@ -582,23 +697,35 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
    * @returns {string} HTML
    */
   C.createTabContent = function (tab, type) {
-    const isAudio = (type === 'audio');
-
     switch (tab) {
       case 'BasicFileUpload':
         const id = 'av-upload-' + C.getNextId();
-        return '<h3 id="' + id + '">' + H5PEditor.t('core', isAudio ? 'uploadAudioTitle' : 'uploadVideoTitle') + '</h3>' +
+        return '<h3 id="' + id + '">' + H5PEditor.t('core', type === 'audio' ? 'uploadAudioTitle' : 'uploadVideoTitle') + '</h3>' +
           '<div class="h5p-file-drop-upload" tabindex="0" role="button" aria-labelledby="' + id + '">' +
-            '<div class="h5p-file-drop-upload-inner ' + type + '"></div>' +
+            '<div class="h5p-file-drop-upload-inner"/>' +
           '</div>';
 
       case 'InputLinkURL':
-        return '<h3>' + H5PEditor.t('core', isAudio ? 'enterAudioTitle' : 'enterVideoTitle') + '</h3>' +
-          '<div class="h5p-file-url-wrapper ' + type + '">' +
-            '<input type="text" placeholder="' + H5PEditor.t('core', isAudio ? 'enterAudioUrl' : 'enterVideoUrl') + '" class="h5p-file-url h5peditor-text"/>' +
+        return '<h3>' + H5PEditor.t('core', type === 'audio' ? 'enterAudioTitle' : 'enterVideoTitle') + '</h3>' +
+          '<div class="h5p-file-url-wrapper">' +
+            '<input type="text" placeholder="' + H5PEditor.t('core', type === 'audio' ? 'enterAudioUrl' : 'enterVideoUrl') + '" class="h5p-file-url h5peditor-text"/>' +
           '</div>' +
-          (isAudio ? '' : '<div class="h5p-errors"></div><div class="h5peditor-field-description">' + H5PEditor.t('core', 'addVideoDescription') + '</div>');
+          (type === 'audio' ? '' : '<div class="h5p-errors"></div><div class="h5peditor-field-description">' + H5PEditor.t('core', 'addVideoDescription') + '</div>');
 
+      case 'LoadPlaylist':
+        return '<h3>Select Kaltura Playlist</h3>' +
+          '<div class="h5p-playlist-button-wrapper">' +
+            '<button class="loadPlaylist">Open Playlist</button>' +
+          '</div>' +
+          '<div id="playlistContent" class="modal">' +          
+            '<div class="modal-content">' +
+              '<div class="search-playlist">' +
+                '<input type="text" placeholder="search" data-search id="input-playlist" />' +
+              '</div>' +
+              '<span class="close">&times;</span>' +
+              '<div id="modalContent" class="play-lists"></div>' +
+            '</div>' +
+          '</div>';
       default:
         return '';
     }
@@ -617,7 +744,8 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
 
     const tabs = [
       'BasicFileUpload',
-      'InputLinkURL'
+      'InputLinkURL',
+      'LoadPlaylist'
     ];
     for (i = 0; i < extraTabs.length; i++) {
       tabs.push(extraTabs[i]);
@@ -664,27 +792,24 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
       '</div>' +
       '<div class="h5p-dialog-box">' +
           C.createTabContent('InputLinkURL', type) +
+      '</div>' + 
+      '<div class="h5p-playlist-button">' +
+        C.createTabContent('LoadPlaylist', type) +
       '</div>',
       false, id, hasDescription
     );
   };
+  
 
   /**
    * Providers incase mime type is unknown.
    * @public
    */
-  C.providers = [
-    {
-      name: 'YouTube',
-      regexp: /(?:https?:\/\/)?(?:www\.)?(?:(?:youtube.com\/(?:attribution_link\?(?:\S+))?(?:v\/|embed\/|watch\/|(?:user\/(?:\S+)\/)?watch(?:\S+)v\=))|(?:youtu.be\/|y2u.be\/))([A-Za-z0-9_-]{11})/i,
-      aspectRatio: '16:9',
-    },
-    {
-      name: 'Panopto',
-      regexp: /^[^\/]+:\/\/([^\/]*panopto\.[^\/]+)\/Panopto\/.+\?id=(.+)$/i,
-      aspectRatio: '16:9',
-    }
-  ];
+  C.providers = [{
+    name: 'YouTube',
+    regexp: /(?:https?:\/\/)?(?:www\.)?(?:(?:youtube.com\/(?:attribution_link\?(?:\S+))?(?:v\/|embed\/|watch\/|(?:user\/(?:\S+)\/)?watch(?:\S+)v\=))|(?:youtu.be\/|y2u.be\/))([A-Za-z0-9_-]{11})/i,
+    aspectRatio: '16:9',
+  }];
 
   // Avoid ID attribute collisions
   let idCounter = 0;

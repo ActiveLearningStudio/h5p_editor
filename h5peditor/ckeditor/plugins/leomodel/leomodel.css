@@ -1,0 +1,22 @@
+/* Base Bootstrap Inspired */
+.row{margin-left:-15px;margin-right:-15px;}
+.row:before,.row:after{content:" ";display:table;}
+.row:after{clear:both;}
+.grid1,.grid2,.grid3,.grid4,.grid5,.grid6,.grid7,.grid8,.grid9,.grid10,.grid11,.grid12{position:relative;float:left;min-height:1px;padding:15px;box-sizing:border-box;-moz-box-sizing:border-box;}
+.grid12{width:100%;}
+.grid11{width:91.66666667%;}
+.grid10{width:83.33333333%;}
+.grid9{width:75%;}
+.grid8{width:66.66666667%;}
+.grid7{width:58.33333333%;}
+.grid6{width:50%;}
+.grid5{width:41.66666667%;}
+.grid4{width:33.33333333%;}
+.grid3{width:25%;}
+.grid2{width:16.66666667%;}
+.grid1{width:8.33333333%;}
+
+/* Custom for CKEditor */
+.grid1 img,.grid2 img,.grid3 img,.grid4 img,.grid5 img,.grid6 img,.grid7 img,.grid8 img,.grid9 img,.grid10 img,.grid11 img,.grid12 img{display:block;max-width:100%;height:auto;}
+.twoCol,.threeCol,.unomodel{padding:8px;margin:10px auto;background:#eee;border-radius:8px;border:1px solid #ddd;box-shadow:0 1px 1px #fff inset, 0 -1px 0px #ccc inset;}
+.grid1,.grid2,.grid3,.grid4,.grid5,.grid6,.grid7,.grid8,.grid9,.grid10,.grid11,.grid12{box-shadow:0 1px 1px #ddd inset;border:1px solid #cccccc;border-radius:5px;background:#fff;min-height:5em;}
