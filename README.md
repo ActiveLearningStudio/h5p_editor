@@ -5,6 +5,10 @@
 
 ```
 Added a new Button in the Interactive video for loading Kaltura Media
+
+Added Search Option in Content Modal
+
+Added Pagination in Modal
 ```
 
 ## Usage

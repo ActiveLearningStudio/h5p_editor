@@ -1,8 +1,8 @@
 const KalturaConfig = {
-    'secret' : 'YOUR_SECRET_KEY',
-    'userId' : 'YOUR_USER_ID', 
-    'type' : 'TYPE', 
-    'partnerId' : 'PARTNER_ID', 
-    'expiry' : 'KS_EXPIRY (OPTIONAL)', 
+    'secret' : '3d835f3579b8480b145922d61b463739',
+    'userId' : 'devtest220@gmail.com', 
+    'type' : '2', 
+    'partnerId' : '4210563', 
+    'expiry' : '', 
     'privileges' : ''
 }

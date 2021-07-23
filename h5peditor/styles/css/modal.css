@@ -41,3 +41,16 @@
   .hide-playlist {
     display: none;
   }
+
+  .hide-playlist-search {
+    display: none;
+  }
+
+  .modal-content nav .pagination {
+    list-style: none;
+    display: flex;
+  }
+
+  .modal-content nav .pagination .page-item {
+    margin-left: 5px;
+  }
