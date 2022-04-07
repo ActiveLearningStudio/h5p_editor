@@ -1112,6 +1112,7 @@ ns.bindImportantDescriptionEvents = function (widget, fieldName, parent) {
  */
 ns.createCopyPasteButtons = function () {
   return '<div class="h5peditor-copypaste-wrap">' +
+           '<button class="h5peditor-existing-activity-button" title="Existing Activity">Existing Activity</button>' +
            '<button class="h5peditor-copy-button disabled" title="' + H5PEditor.t('core', 'copyToClipboard') + '" disabled>' + ns.t('core', 'copyButton') + '</button>' +
            '<button class="h5peditor-paste-button disabled" title="' + H5PEditor.t('core', 'pasteFromClipboard') + '" disabled>' + ns.t('core', 'pasteButton') + '</button>' +
          '</div><div class="h5peditor-clearfix"></div>';

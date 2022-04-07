@@ -80,8 +80,6 @@ ns.Library.prototype.updateCopyPasteButtons = function () {
   const canPaste = pasteCheck.canPaste;
   const canCopy = (this.currentLibrary !== undefined && this.currentLibrary !== '-');
 
-  console.log(this, this.currentLibrary, canCopy);
-
   this.$copyButton
     .prop('disabled', !canCopy)
     .toggleClass('disabled', !canCopy);
@@ -187,6 +185,17 @@ ns.Library.prototype.appendTo = function ($wrapper) {
     });
     this.$pasteButton = this.$myField.find('.h5peditor-paste-button')
       .click(that.pasteContent.bind(this));
+
+    // Launch search modal for existing activities
+    this.$existingActivityButton = this.$myField.find('.h5peditor-existing-activity-button').click(function () {
+      const data = { callback: (activityData) => {
+        H5P.setClipboard(activityData);
+        (that.pasteContent.bind(that)());
+      }};
+      const event = new CustomEvent('launchExistingActivitySearch', { detail: data } );
+      window.parent.dispatchEvent(event);
+      return;
+    });
   }
   ns.LibraryListCache.getLibraries(that.field.options, that.librariesLoaded, that);
 };
