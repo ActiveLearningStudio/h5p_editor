@@ -159,8 +159,23 @@ ns.Library.prototype.appendTo = function ($wrapper) {
     return true;
   };
 
+  var enableExistingActivityBrowse = function () {
+    const blacklist = [
+      "H5P.InteractiveBook",
+    ];
+    var librarySelector = ns.findLibraryAncestor(that.parent);
+    if (librarySelector.currentLibrary === undefined) 
+      return true;
+
+    var library = ns.libraryFromString(librarySelector.currentLibrary);
+    if (blacklist.includes(library.machineName))
+      return false;
+
+    return true;
+  };
+
   if (window.localStorage && enableCopyAndPaste()) {
-    html += ns.createCopyPasteButtons();
+    html += ns.createCopyPasteButtons(enableExistingActivityBrowse());
   }
 
   html += '<div class="libwrap"></div>';
