@@ -203,10 +203,13 @@ ns.Library.prototype.appendTo = function ($wrapper) {
 
     // Launch search modal for existing activities
     this.$existingActivityButton = this.$myField.find('.h5peditor-existing-activity-button').click(function () {
-      const data = { callback: (activityData) => {
-        H5P.setClipboard(activityData);
-        (that.pasteContent.bind(that)());
-      }};
+      const data = {
+        libraries: that.field.options,
+        callback: (activityData) => {
+          H5P.setClipboard(activityData);
+          (that.pasteContent.bind(that)());
+        }
+      };
       const event = new CustomEvent('launchExistingActivitySearch', { detail: data } );
       window.parent.dispatchEvent(event);
       return;
